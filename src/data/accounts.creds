@@ -1,0 +1,8 @@
+:Example:
+user.email=YOUR_EMAIL
+user.name=YOUR_NAME
+user.signingkey=YOUR_SIGNING_KEY
+gpg.program=PATH_TO_GPG_PROGRAM
+commit.gpgSign=Yes_or_No
+username=YOUR_GITHUB_USERNAME
+token=YOUR_GITHUB_TOKEN
