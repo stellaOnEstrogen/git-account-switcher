@@ -12,12 +12,12 @@ To get started with the Git Account Switcher, follow these steps:
    git clone https://github.com/haydenHighOnLife/git-account-switcher.git
    ```
 
-2. Create a credentials file (`accounts.creds`) in the `data/` directory of the project. Refer to the [Creating the Credentials File](./docs/creating-the-creds.md) documention for guidance on how to structure this file.
+2. Create a credentials file (`.accounts.creds`) in the `data/` directory of the project or set the env var `GIT_ACCOUNT_DIR`. Refer to the [Creating the Credentials File](./docs/creating-the-creds.md) documention for guidance on how to structure this file.
 
 3. Run the Git Account Switcher:
 
    ```bash
-   python3 main.py
+   python3 main.py # or use ./scripts/build.sh and run ./dist/main
    ```
 
 ## Documentation
