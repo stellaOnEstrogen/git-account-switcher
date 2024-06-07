@@ -1,10 +1,12 @@
 import os
-import utils
 
-account_dir = utils.check_env('ACCOUNT_DIR') or os.path.join("data", "accounts.creds")
+def check_env(input):
+    return os.getenv(input, None)
+
+account_dir = os.path.join(check_env('GIT_ACCOUNT_DIR'), '.accounts.creds') or os.path.join("data", ".accounts.creds")
 
 user_profile = os.getenv('USERPROFILE', 'C:\\Users\\Default')
-home_dir = os.getenv('HOME', '/home/default')
+home_dir = os.getenv('HOME', f'/home/{os.getenv("USER", "default")}')
 
 git_config_paths = {
     'nt': os.path.join(user_profile, ".gitconfig"),

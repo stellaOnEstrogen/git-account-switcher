@@ -45,3 +45,4 @@ coverage/
 /bin/
 /lib/
 /obj/
+*.spec

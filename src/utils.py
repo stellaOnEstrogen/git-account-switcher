@@ -1,6 +1,8 @@
 import os
 import sys
 import config
+import json
+import datetime
 
 def check_env(input):
     return os.getenv(input, None)
@@ -91,7 +93,6 @@ def load(config_name):
     gpg_program = account.get("gpg.program")
     gpg_sign = account.get("commit.gpgSign")
 
-    # Check if GPG is enabled and warn if some fields are missing
     if gpg_signing_key or gpg_sign or gpg_program:
         if not gpg_signing_key:
             print(f"Warning: 'user.signingkey' is not set for {config_name}.")
@@ -125,6 +126,98 @@ def load(config_name):
         file.write(template)
 
     with open(config.get_git_credentials_path(), "w") as file:
-        file.write(f"https://{account['username']}:{account['token']}@{account['host']}")
+        file.write(f"https://{account['username']}:{account['token']}@github.com")
 
     print(f"Configuration set for {config_name}.")
+    sys.exit(0)
+
+def create():
+    config_name = input("Please enter your Configuration Name: ")
+    user_name = input("Please enter your Git User Name: ")
+    user_email = input("Please enter your Git User Email: ")
+    user_signing_key = input("Do you have a GPG Signing Key? (yes/no): ").lower()
+    user_token = input("Please enter your GitHub Token: ")
+    user_username = input("Please enter your GitHub Username: ")
+
+    use_gpg = False
+    gpg_program = ""
+    gpg_sign = ""
+
+    if user_signing_key == "yes":
+        user_signing_key = input("Please enter your GPG Signing Key: ")
+        gpg_program = input("Please enter your GPG Program Path (Leave blank for default '/usr/bin/gpg'): ").strip()
+        gpg_sign = input("Do you want to sign your commits with GPG? (yes/no): ").lower()
+
+        if not gpg_program:
+            gpg_program = "/usr/bin/gpg"
+
+        use_gpg = True if gpg_sign == "yes" else False
+
+    template = f""":{config_name}:
+user.email={user_email}
+user.name={user_name}
+{f"user.signingkey={user_signing_key}" if use_gpg else ""}
+{f"gpg.program={gpg_program}" if use_gpg else ""}
+{f"commit.gpgSign={'Yes' if use_gpg else 'No'}" if use_gpg else ""}
+username={user_username}
+token={user_token}
+"""
+
+    try:
+        with open(config.account_dir, "a") as file:
+            file.write("\n")
+            file.write(template)
+        print(f"Configuration {config_name} created.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def export():
+    config_name = input("Please enter the Configuration Name to export (Leave blank to export all): ")
+    creds = read_credentials(config.account_dir)
+    format = input("Please enter the format to export (json/txt): ").lower()
+
+    export_dir = input("Please enter the export directory (Leave blank for default './exports'): ")
+    
+    if not export_dir:
+        export_dir = "exports"
+
+    if not os.path.exists(export_dir):
+            os.mkdir(export_dir)
+
+   
+    
+
+    if config_name:
+        if format == "json":
+            with open(f"{export_dir}/{config_name}.json", "w") as file:
+                file.write(json.dumps(creds[config_name]))
+        elif format == "txt":
+            data = creds[config_name]
+            with open(f"{export_dir}/{config_name}.txt", "w") as file:
+                file.write(f":{config_name}:\n")
+                file.write(f"dataExportedOn={datetime.datetime.now().isoformat()}\n\n")
+                for key in data:
+                    file.write(f"{key}={data[key]}\n")
+        else:
+            print("Invalid format.")
+            sys.exit(1)
+    else:
+        if format == "json":
+            with open("{export_dir}/all.json", "w") as file:
+                file.write(json.dumps(creds))
+        elif format == "txt":
+            for key in creds:
+                data = creds[key]
+                with open(f"{export_dir}/{key}.txt", "w") as file:
+                    file.write(f":{key}:\n")
+                    file.write(f"dataExportedOn={datetime.datetime.now().isoformat()}\n\n")
+                    for key in data:
+                        file.write(f"{key}={data[key]}\n")
+        else:
+            print("Invalid format.")
+            sys.exit(1)
+        
+    print("Exported successfully.")
+
+
+        
