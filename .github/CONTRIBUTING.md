@@ -54,7 +54,7 @@ By contributing to this project, you agree that your contributions will be licen
 
 ## Contact
 
-If you have any questions or need assistance, feel free to reach out to us through the project's [issue tracker](https://github.com/haydenHighOnLife/git-account-switcher/issues).
+If you have any questions or need assistance, feel free to reach out to us through the project's [issue tracker](https://github.com/0x7ffed9b08230/git-account-switcher/issues).
 
 
 <p align="center"> Thank you for contributing to the Git Account Switcher! 🎉 </p>
